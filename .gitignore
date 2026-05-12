@@ -1,0 +1,48 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+.eggs/
+dist/
+build/
+*.egg
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Training artifacts (large files — do not commit)
+example1/checkpoints/*.pth
+example1/logs/
+example1/results/training_curves.png
+example1/results/confusion_matrix.png
+example1/results/inference/
+example1/data/
+
+# Generated PPT / DOC outputs
+Training Materials/
+
+# Generator scripts (internal tooling)
+generate_ppts.py
+generate_docs.py
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.idea/
+*.suo
+*.user
+
+# Temp
+*.tmp
+*.bak
