@@ -27,18 +27,10 @@ example1/results/inference/
 example1/data/
 
 # Example 2 artifacts
-example2/checkpoints/*.pth
+example2/checkpoints/
 example2/logs/
-example2/results/training_curves.png
-example2/results/confusion_matrix.png
-example2/results/inference/
-example2/data/*
+example2/results/
 example2/venv/
-# Keep folder stubs in git
-!example2/checkpoints/.gitkeep
-!example2/data/.gitkeep
-!example2/results/.gitkeep
-!example2/test/.gitkeep
 
 # Generated PPT / DOC outputs
 Training Materials/
