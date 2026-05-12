@@ -151,15 +151,17 @@ class _TransformSubset(torch.utils.data.Dataset):
 
 
 def get_dataloaders(train_ds, val_ds, test_ds, tr_cfg: dict):
+    import torch
     bs          = tr_cfg["batch_size"]
     num_workers = min(tr_cfg.get("num_workers", 0), 4)
+    pin_memory  = torch.cuda.is_available()   # only useful with a CUDA device
 
     train_loader = DataLoader(train_ds, batch_size=bs, shuffle=True,
-                              num_workers=num_workers, pin_memory=True)
+                              num_workers=num_workers, pin_memory=pin_memory)
     val_loader   = DataLoader(val_ds,   batch_size=bs, shuffle=False,
-                              num_workers=num_workers, pin_memory=True)
+                              num_workers=num_workers, pin_memory=pin_memory)
     test_loader  = DataLoader(test_ds,  batch_size=bs, shuffle=False,
-                              num_workers=num_workers, pin_memory=True)
+                              num_workers=num_workers, pin_memory=pin_memory)
     return train_loader, val_loader, test_loader
 
 
