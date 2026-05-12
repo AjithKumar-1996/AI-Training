@@ -14,10 +14,9 @@ import math
 import torch
 import torch.nn as nn
 from rich.table import Table
-from rich.console import Console
 from rich.panel import Panel
 
-console = Console()
+from .utils import console
 
 
 # ── Layer-level description catalogue ────────────────────────────────────────
@@ -226,9 +225,6 @@ def build_model(cfg: dict) -> "SimpleCNN":
 
 def print_model_layers(model: SimpleCNN):
     """Pretty-print each layer with shape flow and purpose."""
-    from rich.console import Console
-    console = Console()
-
     console.print()
     t = Table(
         title="[bold cyan]CNN Architecture — Layer by Layer[/bold cyan]",

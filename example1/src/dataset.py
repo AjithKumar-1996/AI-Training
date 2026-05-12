@@ -24,10 +24,9 @@ from torch.utils.data import DataLoader, Subset, random_split
 from torchvision import datasets, transforms
 
 from rich.table import Table
-from rich.console import Console
 from rich.panel  import Panel
 
-console = Console()
+from .utils import console
 
 
 # ── Transform factories ───────────────────────────────────────────────────────
