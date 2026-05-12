@@ -12,6 +12,7 @@ build/
 venv/
 .venv/
 env/
+example1/venv/
 
 # Jupyter
 .ipynb_checkpoints/

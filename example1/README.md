@@ -26,13 +26,28 @@ example1/
 
 ## Quick Start
 
-### 1. Get the dataset
+### 1. Create virtual environment (Python 3.12 + CUDA)
+```bash
+# Windows
+python -m venv venv
+venv\Scripts\activate
+
+# Install PyTorch with CUDA 12.4 (requires CUDA-capable GPU)
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cu124
+
+# Remaining dependencies
+pip install rich scikit-learn matplotlib Pillow
+```
+
+### 2. Get the dataset
 ```bash
 python download_dataset.py
 ```
 
-### 2. Run
+### 3. Run
 ```bash
+# Activate venv first
+venv\Scripts\activate
 python main.py
 ```
 
