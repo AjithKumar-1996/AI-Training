@@ -118,25 +118,37 @@ def load_and_split(cfg: dict):
 
 
 class _TransformSubset(torch.utils.data.Dataset):
-    """Wraps a Subset and applies a custom transform, overriding the parent's."""
+    """
+    Wraps a random_split Subset and applies a custom transform.
+    Loads the PIL image directly from disk — avoids the parent ImageFolder
+    transform entirely (no double-load, no corrupt-image crash on label reads).
+    """
     def __init__(self, subset, transform):
         self.subset    = subset
         self.transform = transform
+        # Cache (path, label) pairs so __getitem__ never touches ImageFolder's loader
+        self._samples = [
+            subset.dataset.samples[i] for i in subset.indices
+        ]
 
     def __len__(self):
-        return len(self.subset)
+        return len(self._samples)
 
     def __getitem__(self, idx):
-        img, label = self.subset[idx]
-        # img is already a tensor (from ImageFolder transform) — we need PIL
-        # Trick: get the original PIL image via the underlying dataset
-        original_idx = self.subset.indices[idx]
-        path, label  = self.subset.dataset.samples[original_idx]
         from PIL import Image
-        pil_img = Image.open(path).convert("RGB")
+        path, label = self._samples[idx]
+        try:
+            pil_img = Image.open(path).convert("RGB")
+        except Exception:
+            # Return a blank image for corrupt files so training doesn't crash
+            pil_img = Image.new("RGB", (224, 224), color=(128, 128, 128))
         if self.transform:
             pil_img = self.transform(pil_img)
         return pil_img, label
+
+    def get_labels(self) -> list[int]:
+        """Return all labels without loading any images — used for fast counting."""
+        return [lbl for _, lbl in self._samples]
 
 
 def get_dataloaders(train_ds, val_ds, test_ds, tr_cfg: dict):
@@ -158,13 +170,9 @@ def print_dataset_summary(cfg: dict, train_ds, val_ds, test_ds, class_names):
     ds_cfg  = cfg["dataset"]
     total   = len(train_ds) + len(val_ds) + len(test_ds)
 
-    # Count per class in each split
+    # Count per class — reads labels directly, no image loading
     def _class_counts(ds):
-        labels = []
-        for i in range(len(ds)):
-            _, lbl = ds[i]
-            labels.append(lbl)
-        return Counter(labels)
+        return Counter(ds.get_labels())
 
     console.print()
     t = Table(
@@ -192,9 +200,8 @@ def print_dataset_summary(cfg: dict, train_ds, val_ds, test_ds, class_names):
         t.add_row(*row)
 
     t.add_section()
-    total_per_class = _class_counts(train_ds)
-    tc = Counter(total_per_class)
-    for ds in [val_ds, test_ds]:
+    tc = Counter()
+    for ds in [train_ds, val_ds, test_ds]:
         tc += _class_counts(ds)
     row = ["TOTAL", str(total), "100%"] + [str(tc.get(i,0)) for i in range(len(class_names))]
     t.add_row(*row)
