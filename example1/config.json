@@ -82,6 +82,7 @@
     },
     "num_workers": 4,
     "device": "auto",
+    "pin_memory": true,
     "seed": 42
   },
 
