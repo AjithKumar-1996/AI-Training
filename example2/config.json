@@ -1,0 +1,105 @@
+{
+  "_comment": "Example 2 — Apple vs Pineapple CNN Classifier. All configurable parameters live here.",
+
+  "model": {
+    "name": "SimpleCNN",
+    "num_classes": 2,
+    "class_names": ["apple", "pineapple"],
+    "input_size": [128, 128],
+    "in_channels": 3,
+    "conv_blocks": [
+      {
+        "out_channels": 32,
+        "kernel_size": 3,
+        "padding": 1,
+        "use_batchnorm": true,
+        "pool_size": 2
+      },
+      {
+        "out_channels": 64,
+        "kernel_size": 3,
+        "padding": 1,
+        "use_batchnorm": true,
+        "pool_size": 2
+      },
+      {
+        "out_channels": 128,
+        "kernel_size": 3,
+        "padding": 1,
+        "use_batchnorm": true,
+        "pool_size": 2
+      },
+      {
+        "out_channels": 256,
+        "kernel_size": 3,
+        "padding": 1,
+        "use_batchnorm": true,
+        "pool_size": 2
+      }
+    ],
+    "fc_hidden_units": 512,
+    "dropout_rate": 0.5
+  },
+
+  "dataset": {
+    "data_dir": "data/apple_vs_pineapple",
+    "train_split": 0.70,
+    "val_split": 0.15,
+    "test_split": 0.15,
+    "augmentation": {
+      "random_horizontal_flip": true,
+      "random_vertical_flip": false,
+      "random_rotation_degrees": 10,
+      "color_jitter_brightness": 0.2,
+      "color_jitter_contrast": 0.2,
+      "color_jitter_saturation": 0.1,
+      "random_grayscale_prob": 0.05
+    }
+  },
+
+  "training": {
+    "batch_size": 8,
+    "num_epochs": 50,
+    "learning_rate": 0.001,
+    "weight_decay": 1e-4,
+    "optimizer": "adam",
+    "lr_scheduler": {
+      "type": "cosine",
+      "T_max": 50,
+      "eta_min": 1e-6
+    },
+    "early_stopping": {
+      "enabled": true,
+      "patience": 10,
+      "min_delta": 0.001,
+      "monitor": "val_loss"
+    },
+    "checkpoint": {
+      "save_dir": "checkpoints",
+      "save_every_n_epochs": 5,
+      "save_best_model": true,
+      "max_checkpoints_to_keep": 3
+    },
+    "num_workers": 4,
+    "device": "auto",
+    "pin_memory": true,
+    "seed": 42
+  },
+
+  "inference": {
+    "batch_size": 16,
+    "confidence_threshold": 0.5,
+    "save_annotated_images": true,
+    "output_dir": "results/inference",
+    "font_scale": 1.2,
+    "box_thickness": 2
+  },
+
+  "logging": {
+    "log_dir": "logs",
+    "results_dir": "results",
+    "save_training_curves": true,
+    "save_confusion_matrix": true,
+    "log_level": "INFO"
+  }
+}
